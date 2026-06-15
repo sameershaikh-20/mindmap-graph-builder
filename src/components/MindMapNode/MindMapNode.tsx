@@ -148,7 +148,6 @@ export const MindMapNode = React.memo(function MindMapNode({ nodeId }: MindMapNo
         <NodeActions
           nodeId={nodeId}
           color={node.color}
-          isEditing={isEditing}
           onStartEdit={handleStartEdit}
         />
       </div>

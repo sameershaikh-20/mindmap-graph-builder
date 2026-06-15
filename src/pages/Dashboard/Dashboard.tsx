@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/UI/Button';
-import { Card } from '../../components/UI/Card';
-import { EmptyState } from '../../components/UI/EmptyState';
 import { MapCard } from '../../components/MapCard/MapCard';
 import { FiMap, FiLayers, FiActivity, FiPlus, FiGrid } from 'react-icons/fi';
 import type { MapMeta } from '../../types/maps';

@@ -1,6 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Card } from '../UI/Card';
-import { Badge } from '../UI/Badge';
 import { FiMoreVertical, FiEdit2, FiCopy, FiTrash2 } from 'react-icons/fi';
 import type { MapMeta } from '../../types/maps';
 

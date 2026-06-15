@@ -6,7 +6,7 @@ import { InfiniteCanvas } from '../../components/InfiniteCanvas/InfiniteCanvas';
 import { WorkspaceOverlay } from '../../components/WorkspaceOverlay/WorkspaceOverlay';
 import { ToastContainer } from '../../components/UI/Toast';
 import { NodeStyles } from '../../components/MindMapNode/NodeStyles';
-import { FiArrowLeft, FiSave, FiDownload, FiFileText, FiImage, FiRefreshCw, FiUpload, FiLayout } from 'react-icons/fi';
+import { FiArrowLeft, FiSave, FiDownload, FiFileText, FiImage, FiUpload, FiLayout } from 'react-icons/fi';
 import { Button } from '../../components/UI/Button';
 import { ButtonGroup, GroupDivider } from '../../components/UI/ButtonGroup';
 import { useGraphStore } from '../../store/useGraphStore';

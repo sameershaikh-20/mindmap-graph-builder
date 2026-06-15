@@ -6,11 +6,10 @@ import { FiEdit2, FiTrash2, FiPlus } from 'react-icons/fi';
 interface NodeActionsProps {
   nodeId: string;
   color: string;
-  isEditing: boolean;
   onStartEdit: () => void;
 }
 
-export const NodeActions = React.memo(function NodeActions({ nodeId, color, isEditing, onStartEdit }: NodeActionsProps) {
+export const NodeActions = React.memo(function NodeActions({ nodeId, color, onStartEdit }: NodeActionsProps) {
   const addNode = useGraphStore((s) => s.actions.addNode);
   const deleteNode = useGraphStore((s) => s.actions.deleteNode);
   const updateNode = useGraphStore((s) => s.actions.updateNode);
