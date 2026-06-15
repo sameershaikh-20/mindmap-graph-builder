@@ -6,7 +6,7 @@ import { InfiniteCanvas } from '../../components/InfiniteCanvas/InfiniteCanvas';
 import { WorkspaceOverlay } from '../../components/WorkspaceOverlay/WorkspaceOverlay';
 import { ToastContainer } from '../../components/UI/Toast';
 import { NodeStyles } from '../../components/MindMapNode/NodeStyles';
-import { FiArrowLeft, FiSave, FiDownload, FiFileText, FiImage, FiShare2, FiRefreshCw, FiUpload, FiLayout } from 'react-icons/fi';
+import { FiArrowLeft, FiSave, FiDownload, FiFileText, FiImage, FiRefreshCw, FiUpload, FiLayout } from 'react-icons/fi';
 import { Button } from '../../components/UI/Button';
 import { ButtonGroup, GroupDivider } from '../../components/UI/ButtonGroup';
 import { useGraphStore } from '../../store/useGraphStore';
@@ -136,9 +136,10 @@ export const Editor = () => {
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: '8px 16px',
-          background: '#1e1e3f',
-          borderBottom: '1px solid rgba(255,255,255,0.08)',
+          background: 'rgba(26,26,46,0.95)',
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
           zIndex: 10,
+          backdropFilter: 'blur(12px)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -158,7 +159,7 @@ export const Editor = () => {
               borderRadius: 4,
               transition: 'all 0.2s',
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(99,102,241,0.15)'; }}
             onMouseLeave={(e) => { e.currentTarget.style.color = '#a1a1aa'; e.currentTarget.style.background = 'none'; }}
           >
             <FiArrowLeft size={16} />
@@ -171,6 +172,7 @@ export const Editor = () => {
             <div style={{
               width: 6, height: 6, borderRadius: '50%',
               background: isSynced ? '#22c55e' : '#a1a1aa',
+              boxShadow: isSynced ? '0 0 8px rgba(34,197,94,0.5)' : 'none',
               transition: 'background 0.3s',
             }} />
             <span style={{ color: '#a1a1aa', fontSize: 11, fontFamily: 'Inter, sans-serif' }}>
@@ -220,10 +222,6 @@ export const Editor = () => {
               Save
             </Button>
           </ButtonGroup>
-
-          <Button variant="ghost" size="sm" icon={<FiShare2 size={14} />}>
-            Share
-          </Button>
         </div>
 
         <input

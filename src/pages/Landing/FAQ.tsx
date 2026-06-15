@@ -15,34 +15,54 @@ export const FAQ = () => {
   return (
     <section
       style={{
-        padding: '80px 24px',
-        background: '#1a1a2e',
+        padding: '100px 24px',
+        background: 'linear-gradient(180deg, #1e1e3f 0%, #1a1a2e 100%)',
       }}
     >
       <div style={{ maxWidth: 700, margin: '0 auto' }}>
-        <h2
-          style={{
-            textAlign: 'center',
-            fontSize: 32,
-            fontWeight: 600,
-            color: '#ffffff',
-            marginBottom: 48,
-          }}
-        >
-          Frequently Asked Questions
-        </h2>
+        <div style={{ textAlign: 'center', marginBottom: 56 }}>
+          <div
+            style={{
+              display: 'inline-block',
+              padding: '6px 16px',
+              borderRadius: 20,
+              background: 'rgba(20,184,166,0.12)',
+              border: '1px solid rgba(20,184,166,0.2)',
+              color: '#14b8a6',
+              fontSize: 13,
+              fontWeight: 500,
+              marginBottom: 16,
+            }}
+          >
+            FAQ
+          </div>
+          <h2
+            style={{
+              textAlign: 'center',
+              fontSize: 36,
+              fontWeight: 700,
+              color: '#ffffff',
+              marginBottom: 12,
+              letterSpacing: '-0.02em',
+            }}
+          >
+            Frequently Asked Questions
+          </h2>
+        </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {faqs.map((faq, i) => {
             const isOpen = openIndex === i;
             return (
               <div
                 key={i}
+                className={`fade-in-up-d${i + 1}`}
                 style={{
-                  background: '#2a2a4a',
-                  borderRadius: 8,
-                  border: '1px solid rgba(255,255,255,0.06)',
+                  background: isOpen ? 'rgba(99,102,241,0.08)' : '#2a2a4a',
+                  borderRadius: 12,
+                  border: isOpen ? '1px solid rgba(99,102,241,0.25)' : '1px solid rgba(255,255,255,0.06)',
                   overflow: 'hidden',
+                  transition: 'all 0.3s ease',
                 }}
               >
                 <button
@@ -52,39 +72,51 @@ export const FAQ = () => {
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    padding: '16px 20px',
+                    padding: '18px 22px',
                     background: 'none',
                     border: 'none',
-                    color: '#ffffff',
+                    color: isOpen ? '#ffffff' : '#e0e0e0',
                     cursor: 'pointer',
-                    fontSize: 14,
+                    fontSize: 15,
                     fontWeight: 500,
                     fontFamily: 'Inter, sans-serif',
                     textAlign: 'left',
+                    transition: 'color 0.2s',
                   }}
                 >
                   {faq.q}
-                  <FiChevronDown
-                    size={16}
-                    style={{
-                      color: '#a1a1aa',
-                      transition: 'transform 0.2s',
-                      transform: isOpen ? 'rotate(180deg)' : 'rotate(0)',
-                    }}
-                  />
+                  <div style={{
+                    width: 28, height: 28, borderRadius: 8,
+                    background: isOpen ? 'rgba(99,102,241,0.2)' : 'rgba(255,255,255,0.06)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    flexShrink: 0, marginLeft: 12,
+                    transition: 'all 0.3s',
+                  }}>
+                    <FiChevronDown
+                      size={16}
+                      style={{
+                        color: isOpen ? '#6366f1' : '#a1a1aa',
+                        transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                        transform: isOpen ? 'rotate(180deg)' : 'rotate(0)',
+                      }}
+                    />
+                  </div>
                 </button>
-                {isOpen && (
-                  <div
-                    style={{
-                      padding: '0 20px 16px',
-                      color: '#a1a1aa',
-                      fontSize: 13,
-                      lineHeight: 1.6,
-                    }}
-                  >
+                <div style={{
+                  maxHeight: isOpen ? 200 : 0,
+                  opacity: isOpen ? 1 : 0,
+                  overflow: 'hidden',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                }}>
+                  <div style={{
+                    padding: '0 22px 18px',
+                    color: '#a1a1aa',
+                    fontSize: 14,
+                    lineHeight: 1.7,
+                  }}>
                     {faq.a}
                   </div>
-                )}
+                </div>
               </div>
             );
           })}

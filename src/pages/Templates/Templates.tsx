@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom';
-import { Card } from '../../components/UI/Card';
 import { Button } from '../../components/UI/Button';
 import { FiBriefcase, FiStar, FiBook, FiClock, FiTrendingUp, FiMap } from 'react-icons/fi';
 import type { Node } from '../../types';
@@ -9,6 +8,7 @@ interface TemplateDef {
   description: string;
   icon: typeof FiBriefcase;
   color: string;
+  category: string;
   nodes: Record<string, Node>;
   rootNodeId: string;
 }
@@ -76,12 +76,30 @@ function makeTemplate(rootTitle: string, color: string, children: { title: strin
   return { nodes, rootNodeId: rootId };
 }
 
+const MiniMapPreview = ({ color, childCount }: { color: string; childCount: number }) => (
+  <svg width="100%" height="60" viewBox="0 0 200 60" fill="none" style={{ margin: '12px 0 8px', opacity: 0.7 }}>
+    <circle cx="100" cy="30" r="8" fill={color} opacity="0.9" />
+    {[...Array(Math.min(childCount, 3))].map((_, i) => {
+      const angle = ((i - (childCount - 1) / 2) * 30) * (Math.PI / 180);
+      const x = 100 + Math.cos(angle) * 55;
+      const y = 30 + Math.sin(angle) * 35;
+      return (
+        <g key={i}>
+          <line x1="100" y1="30" x2={x} y2={y} stroke={color} strokeWidth="1.5" opacity="0.4" />
+          <circle cx={x} cy={y} r="5" fill={color} opacity="0.6" />
+        </g>
+      );
+    })}
+  </svg>
+);
+
 const templates: TemplateDef[] = [
   {
     name: 'Project Plan',
     description: 'Organize project tasks and milestones',
     icon: FiBriefcase,
     color: '#6366f1',
+    category: 'Business',
     ...makeTemplate('Project Plan', '#6366f1', [
       { title: 'Planning', subchildren: ['Requirements', 'Timeline', 'Resources'] },
       { title: 'Development', subchildren: ['Frontend', 'Backend', 'Testing'] },
@@ -93,6 +111,7 @@ const templates: TemplateDef[] = [
     description: 'Capture and organize creative ideas',
     icon: FiStar,
     color: '#ec4899',
+    category: 'Creative',
     ...makeTemplate('Brainstorm', '#ec4899', [
       { title: 'Core Idea', subchildren: ['What', 'Why', 'How'] },
       { title: 'Ideas', subchildren: ['Idea 1', 'Idea 2', 'Idea 3'] },
@@ -104,6 +123,7 @@ const templates: TemplateDef[] = [
     description: 'Structure your study materials',
     icon: FiBook,
     color: '#14b8a6',
+    category: 'Education',
     ...makeTemplate('Subject', '#14b8a6', [
       { title: 'Chapter 1', subchildren: ['Key Concepts', 'Summary'] },
       { title: 'Chapter 2', subchildren: ['Key Concepts', 'Summary'] },
@@ -115,6 +135,7 @@ const templates: TemplateDef[] = [
     description: 'Document meeting discussions',
     icon: FiClock,
     color: '#f59e0b',
+    category: 'Business',
     ...makeTemplate('Meeting', '#f59e0b', [
       { title: 'Agenda', subchildren: ['Topic 1', 'Topic 2'] },
       { title: 'Discussion', subchildren: ['Points Raised', 'Decisions Made'] },
@@ -126,6 +147,7 @@ const templates: TemplateDef[] = [
     description: 'Analyze strengths and opportunities',
     icon: FiTrendingUp,
     color: '#22c55e',
+    category: 'Strategy',
     ...makeTemplate('SWOT Analysis', '#22c55e', [
       { title: 'Strengths', subchildren: ['Internal advantage 1', 'Internal advantage 2'] },
       { title: 'Weaknesses', subchildren: ['Internal gap 1', 'Internal gap 2'] },
@@ -138,6 +160,7 @@ const templates: TemplateDef[] = [
     description: 'Plan your product roadmap',
     icon: FiMap,
     color: '#ef4444',
+    category: 'Product',
     ...makeTemplate('Product Roadmap', '#ef4444', [
       { title: 'Phase 1 — MVP', subchildren: ['Core Features', 'Launch'] },
       { title: 'Phase 2 — Growth', subchildren: ['New Features', 'Marketing'] },
@@ -172,58 +195,104 @@ export const Templates = () => {
 
   return (
     <div style={{ padding: '32px', maxWidth: 1000, margin: '0 auto' }}>
-      <h1 style={{ color: '#ffffff', fontSize: 24, fontWeight: 600, marginBottom: 8 }}>
-        Templates
-      </h1>
-      <p style={{ color: '#a1a1aa', fontSize: 14, marginBottom: 32 }}>
-        Start faster with pre-built templates
-      </p>
+      <div style={{ marginBottom: 36 }}>
+        <div
+          style={{
+            display: 'inline-block',
+            padding: '6px 16px',
+            borderRadius: 20,
+            background: 'rgba(99,102,241,0.12)',
+            border: '1px solid rgba(99,102,241,0.2)',
+            color: '#6366f1',
+            fontSize: 13,
+            fontWeight: 500,
+            marginBottom: 16,
+          }}
+        >
+          Templates
+        </div>
+        <h1 style={{ color: '#ffffff', fontSize: 26, fontWeight: 700, marginBottom: 8, letterSpacing: '-0.02em' }}>
+          Start with a Template
+        </h1>
+        <p style={{ color: '#a1a1aa', fontSize: 14 }}>
+          Choose a pre-built template to get started quickly
+        </p>
+      </div>
 
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-          gap: 16,
+          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+          gap: 20,
         }}
       >
-        {templates.map((template) => {
+        {templates.map((template, i) => {
           const Icon = template.icon;
+          const childCount = template.rootNodeId
+            ? Object.values(template.nodes).filter((n) => n.parentId === template.rootNodeId).length
+            : 3;
           return (
-            <Card
+            <div
               key={template.name}
-              hover
-              padding={0}
-              style={{ overflow: 'hidden', cursor: 'pointer' }}
+              className={`fade-in-up-d${(i % 6) + 1}`}
+              style={{
+                background: '#2a2a4a',
+                borderRadius: 14,
+                border: '1px solid rgba(255,255,255,0.06)',
+                overflow: 'hidden',
+                cursor: 'pointer',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                position: 'relative',
+              }}
               onClick={() => handleUseTemplate(template)}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = `${template.color}40`;
+                e.currentTarget.style.boxShadow = `0 8px 32px ${template.color}15`;
+                e.currentTarget.style.transform = 'translateY(-4px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)';
+                e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
             >
-              <div
-                style={{
-                  height: 4,
-                  background: template.color,
-                }}
-              />
-              <div style={{ padding: 20 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
-                  <div
-                    style={{
-                      width: 36,
-                      height: 36,
-                      borderRadius: 8,
-                      background: `${template.color}18`,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: template.color,
-                      flexShrink: 0,
-                    }}
-                  >
-                    <Icon size={18} />
+              <div style={{
+                height: 4,
+                background: `linear-gradient(90deg, ${template.color}, ${template.color}80)`,
+              }} />
+              <div style={{ padding: '20px 24px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div
+                      style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: 10,
+                        background: `${template.color}15`,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: template.color,
+                        flexShrink: 0,
+                      }}
+                    >
+                      <Icon size={20} />
+                    </div>
+                    <h3 style={{ margin: 0, color: '#ffffff', fontSize: 16, fontWeight: 600 }}>
+                      {template.name}
+                    </h3>
                   </div>
-                  <h3 style={{ margin: 0, color: '#ffffff', fontSize: 15, fontWeight: 600 }}>
-                    {template.name}
-                  </h3>
+                  <span style={{
+                    fontSize: 11, fontWeight: 500,
+                    padding: '3px 10px', borderRadius: 12,
+                    background: `${template.color}15`,
+                    color: template.color,
+                  }}>
+                    {template.category}
+                  </span>
                 </div>
-                <p style={{ margin: '0 0 14px', color: '#a1a1aa', fontSize: 13, lineHeight: 1.5 }}>
+                <MiniMapPreview color={template.color} childCount={childCount} />
+                <p style={{ margin: '0 0 16px', color: '#a1a1aa', fontSize: 13, lineHeight: 1.5 }}>
                   {template.description}
                 </p>
                 <Button
@@ -234,7 +303,7 @@ export const Templates = () => {
                   Use Template
                 </Button>
               </div>
-            </Card>
+            </div>
           );
         })}
       </div>

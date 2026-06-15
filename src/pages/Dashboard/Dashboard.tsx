@@ -4,7 +4,7 @@ import { Button } from '../../components/UI/Button';
 import { Card } from '../../components/UI/Card';
 import { EmptyState } from '../../components/UI/EmptyState';
 import { MapCard } from '../../components/MapCard/MapCard';
-import { FiMap, FiLayers, FiActivity } from 'react-icons/fi';
+import { FiMap, FiLayers, FiActivity, FiPlus, FiGrid } from 'react-icons/fi';
 import type { MapMeta } from '../../types/maps';
 
 export const Dashboard = () => {
@@ -37,82 +37,122 @@ export const Dashboard = () => {
   };
 
   const statItems = [
-    { label: 'Total Maps', value: stats.totalMaps, icon: FiMap },
-    { label: 'Total Nodes', value: stats.totalNodes, icon: FiLayers },
-    { label: 'Active This Week', value: stats.recentActivity, icon: FiActivity },
+    { label: 'Total Maps', value: stats.totalMaps, icon: FiMap, color: '#6366f1', gradient: 'linear-gradient(135deg, #6366f1, #4f46e5)' },
+    { label: 'Total Nodes', value: stats.totalNodes, icon: FiLayers, color: '#ec4899', gradient: 'linear-gradient(135deg, #ec4899, #db2777)' },
+    { label: 'Active This Week', value: stats.recentActivity, icon: FiActivity, color: '#14b8a6', gradient: 'linear-gradient(135deg, #14b8a6, #0d9488)' },
   ];
 
   return (
     <div style={{ padding: '32px', maxWidth: 1200, margin: '0 auto' }}>
-      <div style={{ marginBottom: 32 }}>
-        <h1 style={{ color: '#ffffff', marginBottom: 4, fontSize: 22, fontWeight: 600 }}>
-          Welcome!
-        </h1>
-        <p style={{ color: '#a1a1aa', fontSize: 13 }}>
-          {maps.length > 0
-            ? `You have ${maps.length} mind map${maps.length !== 1 ? 's' : ''}`
-            : 'Create your first mind map to get started'}
-        </p>
+      <div style={{ marginBottom: 36, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
+        <div>
+          <h1 style={{ color: '#ffffff', marginBottom: 6, fontSize: 26, fontWeight: 700, letterSpacing: '-0.02em' }}>
+            Welcome back!
+          </h1>
+          <p style={{ color: '#a1a1aa', fontSize: 14 }}>
+            {maps.length > 0
+              ? `You have ${maps.length} mind map${maps.length !== 1 ? 's' : ''}`
+              : 'Create your first mind map to get started'}
+          </p>
+        </div>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <Button icon={<FiPlus size={16} />} onClick={createNewMap}>
+            New Map
+          </Button>
+          <Button variant="secondary" icon={<FiGrid size={16} />} onClick={() => navigate('/templates')}>
+            Templates
+          </Button>
+        </div>
       </div>
 
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
-          gap: 12,
-          marginBottom: 28,
+          gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+          gap: 16,
+          marginBottom: 36,
         }}
       >
-        {statItems.map((stat) => {
+        {statItems.map((stat, i) => {
           const Icon = stat.icon;
           return (
-            <Card key={stat.label} padding={14}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div
+              key={stat.label}
+              className={`fade-in-up-d${i + 1}`}
+              style={{
+                background: '#2a2a4a',
+                borderRadius: 12,
+                border: '1px solid rgba(255,255,255,0.06)',
+                padding: '20px 20px',
+                position: 'relative',
+                overflow: 'hidden',
+                transition: 'all 0.3s',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = `${stat.color}30`;
+                e.currentTarget.style.transform = 'translateY(-2px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: 4, background: stat.gradient, borderRadius: '12px 0 0 12px' }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                 <div
                   style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: 6,
-                    background: 'rgba(99,102,241,0.12)',
+                    width: 44,
+                    height: 44,
+                    borderRadius: 10,
+                    background: `${stat.color}15`,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: '#6366f1',
+                    color: stat.color,
                     flexShrink: 0,
                   }}
                 >
-                  <Icon size={16} />
+                  <Icon size={20} />
                 </div>
                 <div>
-                  <p style={{ color: '#a1a1aa', fontSize: 11, margin: 0 }}>{stat.label}</p>
-                  <p style={{ color: '#ffffff', fontSize: 22, fontWeight: 600, margin: 0 }}>{stat.value}</p>
+                  <p style={{ color: '#a1a1aa', fontSize: 12, margin: '0 0 2px', fontWeight: 500 }}>{stat.label}</p>
+                  <p style={{ color: '#ffffff', fontSize: 26, fontWeight: 700, margin: 0, letterSpacing: '-0.02em' }}>{stat.value}</p>
                 </div>
               </div>
-            </Card>
+            </div>
           );
         })}
       </div>
 
-      <div style={{ marginBottom: 24, display: 'flex', gap: 12 }}>
-        <Button onClick={createNewMap}>+ New Map</Button>
-        <Button variant="outline" onClick={() => navigate('/templates')}>
-          Browse Templates
-        </Button>
-      </div>
-
       <div>
-        <h2 style={{ color: '#ffffff', marginBottom: 16, fontSize: 18, fontWeight: 600 }}>Recent Maps</h2>
+        <h2 style={{ color: '#ffffff', marginBottom: 20, fontSize: 18, fontWeight: 600 }}>Recent Maps</h2>
         {maps.length === 0 ? (
-          <EmptyState
-            title="No maps yet"
-            description="Create your first mind map to get started"
-            action={{ label: 'Create Your First Map', onClick: createNewMap }}
-          />
+          <div style={{
+            background: '#2a2a4a',
+            borderRadius: 16,
+            border: '2px dashed rgba(255,255,255,0.1)',
+            padding: '64px 32px',
+            textAlign: 'center',
+          }}>
+            <div style={{
+              width: 64, height: 64, borderRadius: 16,
+              background: 'rgba(99,102,241,0.12)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              margin: '0 auto 20px', color: '#6366f1',
+            }}>
+              <FiMap size={28} />
+            </div>
+            <h3 style={{ color: '#ffffff', fontSize: 18, fontWeight: 600, marginBottom: 8 }}>No maps yet</h3>
+            <p style={{ color: '#a1a1aa', fontSize: 14, marginBottom: 28, maxWidth: 360, margin: '0 auto 28px' }}>
+              Create your first mind map to start organizing your ideas visually
+            </p>
+            <Button icon={<FiPlus size={16} />} onClick={createNewMap}>Create Your First Map</Button>
+          </div>
         ) : (
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
               gap: 16,
             }}
           >

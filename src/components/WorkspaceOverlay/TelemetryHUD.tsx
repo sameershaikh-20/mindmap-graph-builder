@@ -14,11 +14,11 @@ export const TelemetryHUD = React.memo(function TelemetryHUD() {
   return (
     <div
       style={{
-        position: 'fixed', top: 16, right: 16, zIndex: 50,
-        background: 'rgba(30,30,63,0.85)', backdropFilter: 'blur(12px)',
+        position: 'fixed', top: 60, right: 16, zIndex: 50,
+        background: 'rgba(26,26,46,0.9)', backdropFilter: 'blur(16px)',
         borderRadius: 10,
         border: '1px solid rgba(255,255,255,0.08)',
-        boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
+        boxShadow: '0 4px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(99,102,241,0.08)',
         fontFamily: 'Inter, sans-serif', fontSize: 11,
         color: '#a1a1aa', overflow: 'hidden', transition: 'all 0.2s',
       }}
@@ -30,18 +30,36 @@ export const TelemetryHUD = React.memo(function TelemetryHUD() {
           padding: expanded ? '8px 12px 6px' : '6px 10px',
           background: 'none', border: 'none', color: '#a1a1aa',
           cursor: 'pointer', fontSize: 11, fontFamily: 'Inter, sans-serif',
+          transition: 'all 0.15s',
         }}
+        onMouseEnter={(e) => { e.currentTarget.style.color = '#fff'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.color = '#a1a1aa'; }}
       >
         <FiInfo size={12} />
         {expanded && <span style={{ color: '#fff', fontWeight: 600 }}>Telemetry</span>}
       </button>
       {expanded && (
-        <div style={{ padding: '0 12px 10px', lineHeight: 1.7 }}>
-          <div>Nodes: <span style={{ color: '#fff' }}>{activeBranches}</span></div>
-          <div>Depth: <span style={{ color: '#fff' }}>{maxDepth}</span></div>
-          <div>Pan: <span style={{ color: '#fff', fontVariantNumeric: 'tabular-nums' }}>{Math.round(panX)}, {Math.round(panY)}</span></div>
-          <div>Zoom: <span style={{ color: '#fff' }}>{zoomScale.toFixed(2)}x</span></div>
-          <div>Saved: <span style={{ color: '#fff' }}>{lastSaved ? lastSaved.toLocaleTimeString() : '—'}</span></div>
+        <div style={{ padding: '0 12px 10px', lineHeight: 1.8 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}>
+            <span style={{ color: '#71717a' }}>Nodes</span>
+            <span style={{ color: '#fff', fontVariantNumeric: 'tabular-nums' }}>{activeBranches}</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}>
+            <span style={{ color: '#71717a' }}>Depth</span>
+            <span style={{ color: '#fff', fontVariantNumeric: 'tabular-nums' }}>{maxDepth}</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}>
+            <span style={{ color: '#71717a' }}>Pan</span>
+            <span style={{ color: '#fff', fontVariantNumeric: 'tabular-nums' }}>{Math.round(panX)}, {Math.round(panY)}</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}>
+            <span style={{ color: '#71717a' }}>Zoom</span>
+            <span style={{ color: '#fff', fontVariantNumeric: 'tabular-nums' }}>{zoomScale.toFixed(2)}x</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}>
+            <span style={{ color: '#71717a' }}>Saved</span>
+            <span style={{ color: '#fff' }}>{lastSaved ? lastSaved.toLocaleTimeString() : '—'}</span>
+          </div>
         </div>
       )}
     </div>

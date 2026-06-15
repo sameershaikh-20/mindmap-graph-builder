@@ -13,30 +13,63 @@ export const ZoomWidget = React.memo(function ZoomWidget() {
   return (
     <div style={{
       position: 'fixed', bottom: 24, left: 24, zIndex: 50,
-      display: 'flex', alignItems: 'center', gap: 6,
-      background: 'rgba(30,30,63,0.85)', backdropFilter: 'blur(12px)',
-      borderRadius: 10, padding: '6px 12px',
-      border: '1px solid rgba(255,255,255,0.08)',
-      boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
+      display: 'flex', alignItems: 'center', gap: 4,
+      background: 'rgba(26,26,46,0.9)', backdropFilter: 'blur(16px)',
+      borderRadius: 12, padding: '4px 6px',
+      border: '1px solid rgba(255,255,255,0.1)',
+      boxShadow: '0 4px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(99,102,241,0.08)',
     }}>
       <button onClick={zoomOut} aria-label="Zoom out"
-        style={{ background: 'none', border: 'none', color: '#a1a1aa', cursor: 'pointer', fontSize: 16, padding: '2px 6px' }}>
+        style={{
+          background: 'rgba(255,255,255,0.05)', border: 'none', borderRadius: 8,
+          color: '#a1a1aa', cursor: 'pointer', fontSize: 14, padding: '6px 10px',
+          transition: 'all 0.15s',
+        }}
+        onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(99,102,241,0.2)'; e.currentTarget.style.color = '#fff'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = '#a1a1aa'; }}
+      >
         −
       </button>
-      <span style={{ color: '#fff', fontSize: 12, minWidth: 44, textAlign: 'center', fontVariantNumeric: 'tabular-nums' }}>
+      <div style={{
+        color: '#fff', fontSize: 12, minWidth: 52, textAlign: 'center',
+        fontVariantNumeric: 'tabular-nums', fontWeight: 500, padding: '6px 4px',
+      }}>
         {Math.round(zoomScale * 100)}%
-      </span>
+      </div>
       <button onClick={zoomIn} aria-label="Zoom in"
-        style={{ background: 'none', border: 'none', color: '#a1a1aa', cursor: 'pointer', fontSize: 16, padding: '2px 6px' }}>
+        style={{
+          background: 'rgba(255,255,255,0.05)', border: 'none', borderRadius: 8,
+          color: '#a1a1aa', cursor: 'pointer', fontSize: 14, padding: '6px 10px',
+          transition: 'all 0.15s',
+        }}
+        onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(99,102,241,0.2)'; e.currentTarget.style.color = '#fff'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = '#a1a1aa'; }}
+      >
         +
       </button>
-      <div style={{ width: 1, height: 20, background: 'rgba(255,255,255,0.1)', margin: '0 4px' }} />
+      <div style={{ width: 1, height: 24, background: 'rgba(255,255,255,0.1)', margin: '0 4px' }} />
       <button onClick={resetView} aria-label="Reset view"
-        style={{ background: 'none', border: 'none', color: '#a1a1aa', cursor: 'pointer', fontSize: 11, padding: '2px 6px', whiteSpace: 'nowrap' }}>
+        style={{
+          background: 'rgba(255,255,255,0.05)', border: 'none', borderRadius: 8,
+          color: '#a1a1aa', cursor: 'pointer', fontSize: 11, padding: '6px 10px',
+          whiteSpace: 'nowrap', fontFamily: 'Inter, sans-serif', fontWeight: 500,
+          transition: 'all 0.15s',
+        }}
+        onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(99,102,241,0.2)'; e.currentTarget.style.color = '#fff'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = '#a1a1aa'; }}
+      >
         Reset
       </button>
       <button onClick={fitToScreen} aria-label="Fit to screen"
-        style={{ background: 'none', border: 'none', color: '#a1a1aa', cursor: 'pointer', fontSize: 11, padding: '2px 6px', whiteSpace: 'nowrap' }}>
+        style={{
+          background: 'rgba(255,255,255,0.05)', border: 'none', borderRadius: 8,
+          color: '#a1a1aa', cursor: 'pointer', fontSize: 11, padding: '6px 10px',
+          whiteSpace: 'nowrap', fontFamily: 'Inter, sans-serif', fontWeight: 500,
+          transition: 'all 0.15s',
+        }}
+        onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(99,102,241,0.2)'; e.currentTarget.style.color = '#fff'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = '#a1a1aa'; }}
+      >
         Fit
       </button>
     </div>

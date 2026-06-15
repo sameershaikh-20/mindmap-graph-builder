@@ -10,6 +10,17 @@ interface MindMapNodeProps {
   nodeId: string;
 }
 
+const getNodeDepth = (node: any): number => {
+  let depth = 0;
+  let current = node;
+  while (current.parentId) {
+    depth++;
+    current = useGraphStore.getState().nodes[current.parentId];
+    if (!current) break;
+  }
+  return depth;
+};
+
 export const MindMapNode = React.memo(function MindMapNode({ nodeId }: MindMapNodeProps) {
   const node = useGraphStore((s) => s.nodes[nodeId]);
   const selectedNodeId = useGraphStore((s) => s.selectedNodeId);
@@ -26,7 +37,7 @@ export const MindMapNode = React.memo(function MindMapNode({ nodeId }: MindMapNo
   const drag = useDraggableNode(nodeId);
 
   const isSelected = selectedNodeId === nodeId;
-
+  const depth = useMemo(() => node ? getNodeDepth(node) : 0, [node]);
   const childCount = useMemo(() => node?.childrenIds?.length ?? 0, [node?.childrenIds]);
   const scaledWidth = NODE_DEFAULTS.width * zoomScale;
   const scaledHeight = NODE_DEFAULTS.height * zoomScale;
@@ -73,25 +84,26 @@ export const MindMapNode = React.memo(function MindMapNode({ nodeId }: MindMapNo
 
   if (!node) return null;
 
+  const nodeColor = node.color || '#6366f1';
   const nodeStyle: React.CSSProperties = {
     position: 'absolute',
     left: node.x - scaledWidth / 2,
     top: node.y - scaledHeight / 2,
     width: scaledWidth,
     minHeight: scaledHeight,
-    background: 'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 50%, rgba(0,0,0,0.04) 100%), #1e1e3f',
-    borderRadius: NODE_DEFAULTS.borderRadius,
-    border: isSelected ? '1.5px solid rgba(99,102,241,0.6)' : '1px solid rgba(255,255,255,0.08)',
+    background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 50%, rgba(0,0,0,0.04) 100%), #1e1e3f',
+    borderRadius: depth === 0 ? 14 : depth === 1 ? 12 : NODE_DEFAULTS.borderRadius,
+    border: isSelected ? `1.5px solid ${nodeColor}` : `1px solid ${nodeColor}33`,
     boxShadow: isSelected
-      ? '0 1px 2px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.15), 0 8px 24px rgba(0,0,0,0.2), 0 0 30px rgba(99,102,241,0.4), inset 0 1px 0 rgba(255,255,255,0.08)'
-      : '0 1px 2px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.15), 0 8px 24px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.08)',
-    padding: '12px 16px',
+      ? `0 1px 2px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.15), 0 8px 24px rgba(0,0,0,0.2), 0 0 30px ${nodeColor}66, inset 0 1px 0 rgba(255,255,255,0.08)`
+      : `0 1px 2px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.15), 0 8px 24px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.08)`,
+    padding: depth === 0 ? '16px 20px' : '12px 16px',
     cursor: 'grab',
     transition: isEditing ? 'none' : 'all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)',
     zIndex: isSelected ? 10 : 1,
     touchAction: 'none',
     userSelect: 'none',
-    transform: isSelected ? 'scale(1.02)' : 'scale(1)',
+    transform: isSelected ? 'scale(1.03)' : 'scale(1)',
     willChange: 'transform, box-shadow',
   };
 
@@ -114,16 +126,24 @@ export const MindMapNode = React.memo(function MindMapNode({ nodeId }: MindMapNo
         aria-label={`Node: ${node.title}`}
         aria-selected={isSelected}
       >
+        {depth > 0 && (
+          <div style={{
+            position: 'absolute', top: 0, left: 12, right: 12, height: 1,
+            background: `linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%)`,
+          }} />
+        )}
         <CollapseToggle
           isCollapsed={node.isCollapsed}
           childCount={childCount}
           onToggle={handleToggleCollapse}
+          depth={depth}
         />
         <NodeContent
           node={node}
           isEditing={isEditing}
           onStartEdit={handleStartEdit}
           onFinishEdit={handleFinishEdit}
+          depth={depth}
         />
         <NodeActions
           nodeId={nodeId}
@@ -137,33 +157,52 @@ export const MindMapNode = React.memo(function MindMapNode({ nodeId }: MindMapNo
         <div
           style={{
             position: 'fixed', left: contextMenu.x, top: contextMenu.y, zIndex: 100,
-            background: '#1a1a2e', borderRadius: 8, padding: 4, minWidth: 160,
-            border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+            background: 'rgba(26,26,46,0.95)', backdropFilter: 'blur(16px)',
+            borderRadius: 10, padding: 6, minWidth: 180,
+            border: '1px solid rgba(255,255,255,0.1)',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(99,102,241,0.1)',
           }}
           onClick={(e) => e.stopPropagation()}
         >
           <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             {[
-              { label: 'Add Child Node', action: handleAddChild },
-              { label: 'Edit', action: handleStartEdit },
-              { label: node.isCollapsed ? 'Expand Branch' : 'Collapse Branch', action: handleToggleCollapse },
-              { label: 'Delete', action: handleDelete, danger: true },
+              { icon: '➕', label: 'Add Child', action: handleAddChild },
+              { icon: '✏️', label: 'Edit', action: handleStartEdit },
+              { icon: node.isCollapsed ? '🔽' : '🔼', label: node.isCollapsed ? 'Expand' : 'Collapse', action: handleToggleCollapse },
             ].map((item) => (
               <button
                 key={item.label}
                 onClick={item.action}
                 style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
                   padding: '8px 12px', border: 'none', background: 'transparent',
-                  color: item.danger ? '#ef4444' : '#e0e0e0', cursor: 'pointer',
-                  fontSize: 13, borderRadius: 4, textAlign: 'left',
-                  transition: 'background 0.15s',
+                  color: '#e0e0e0', cursor: 'pointer',
+                  fontSize: 13, borderRadius: 6, textAlign: 'left',
+                  transition: 'all 0.15s',
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(99,102,241,0.15)'; e.currentTarget.style.color = '#fff'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#e0e0e0'; }}
               >
+                <span style={{ fontSize: 12, width: 18, textAlign: 'center' }}>{item.icon}</span>
                 {item.label}
               </button>
             ))}
+            <div style={{ height: 1, background: 'rgba(255,255,255,0.08)', margin: '4px 8px' }} />
+            <button
+              onClick={handleDelete}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                padding: '8px 12px', border: 'none', background: 'transparent',
+                color: '#ef4444', cursor: 'pointer',
+                fontSize: 13, borderRadius: 6, textAlign: 'left',
+                transition: 'all 0.15s',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(239,68,68,0.15)'; e.currentTarget.style.color = '#fca5a5'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#ef4444'; }}
+            >
+              <span style={{ fontSize: 12, width: 18, textAlign: 'center' }}>🗑️</span>
+              Delete
+            </button>
           </div>
         </div>
       )}

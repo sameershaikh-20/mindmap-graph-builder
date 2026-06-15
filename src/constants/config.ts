@@ -10,6 +10,21 @@ export const COLORS = {
   textSecondary: '#a1a1aa',
 } as const;
 
+export const NODE_COLORS = [
+  '#6366f1',
+  '#8b5cf6',
+  '#ec4899',
+  '#f43f5e',
+  '#ef4444',
+  '#f97316',
+  '#f59e0b',
+  '#84cc16',
+  '#22c55e',
+  '#14b8a6',
+  '#06b6d4',
+  '#3b82f6',
+] as const;
+
 export const NODE_DEFAULTS = {
   width: 200,
   height: 80,

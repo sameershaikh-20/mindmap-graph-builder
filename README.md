@@ -1,148 +1,70 @@
-# MindMap Graph Builder
+# 🧠 MindMap — Mind-mapping, simplified.
 
-A feature-rich, browser-based mind mapping application built with React, TypeScript, and Vite. Create, organize, and export visual mind maps on an infinite canvas — no backend required.
+> Create, organize, and share mind maps on an infinite canvas. Beautiful, fast, and completely free.
 
----
-
-## Features
-
-- **Infinite Canvas** — Pan and zoom freely across an unbounded workspace with a grid background and smooth transforms.
-- **Node Management** — Add, edit, move, delete, and collapse nodes. Every node tracks its depth, color, tags, and timestamps.
-- **Bezier Edge Rendering** — Connections between nodes are rendered as smooth SVG bezier curves that update in real time.
-- **Auto-Arrange Layout** — Automatically distributes nodes into a clean tree layout using a subtree-size algorithm.
-- **Undo / Redo** — Full history stack (up to 50 entries) with keyboard shortcuts.
-- **Keyboard Shortcuts** — Fast editing without leaving the keyboard (see table below).
-- **Auto-Save & Manual Save** — Graph state is persisted to `localStorage` automatically; manual save is also available.
-- **IndexedDB Persistence** — Long-term storage via Dexie for saving and listing multiple graphs.
-- **Export** — Export your mind map as JSON, SVG, or PNG.
-- **Import** — Load a previously exported JSON file back into the editor.
-- **Toast Notifications** — Non-intrusive feedback for save, export, and error events.
-- **Workspace Overlay** — Live telemetry HUD showing active node count and max depth, plus a zoom widget.
-- **Authentication Flow** — Login, Sign Up, and Forgot Password pages with a protected route layer.
-- **Dashboard** — Browse and manage all saved graphs with map cards.
-- **Templates** — Starter templates to kick off new maps quickly.
-- **Landing Page** — Marketing pages including Hero, Features, Testimonials, FAQ, and Newsletter sections.
+![MindMap Landing Page](./screenshot-landing.png)
 
 ---
 
-## Tech Stack
+## ✨ Features
 
-| Layer | Library / Tool |
+- **Infinite Canvas** — Pan and zoom freely across an unlimited workspace
+- **Auto-Arrange** — Automatically lay out nodes into a clean, readable tree
+- **Export Options** — Save your mind maps as JSON, SVG, or PNG
+- **Import Support** — Load previously exported JSON maps
+- **Collapsible Branches** — Collapse/expand subtrees to keep things tidy
+- **Undo / Redo** — Full history support for every action
+- **Templates** — Start quickly with pre-built templates (Project Plan, Brainstorming, Study Notes, SWOT Analysis, and more)
+- **Dashboard** — Manage all your mind maps in one place
+- **Auto-save** — Changes are saved automatically every 30 seconds
+- **Dark Theme** — Sleek dark UI built for long sessions
+
+---
+
+## 📸 Screenshots
+
+### Dashboard
+![Dashboard](./screenshot-dashboard.png)
+
+### Templates
+![Templates](./screenshot-templates.png)
+
+### Editor
+![Editor](./screenshot-editor.png)
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
 |---|---|
-| Framework | React 19 |
-| Language | TypeScript 6 |
-| Bundler | Vite 8 |
-| Routing | React Router DOM 7 |
-| State Management | Zustand 5 |
-| Local Database | Dexie 4 (IndexedDB wrapper) |
-| Animations | Framer Motion 12 |
-| Icons | React Icons 5 |
-| ID Generation | UUID 14 |
-| Date Utilities | date-fns 4 |
-| File Download | file-saver 2 |
-| Styling | Inline styles + clsx |
-| Linting | ESLint 10 + typescript-eslint |
+| Framework | React 19 + TypeScript |
+| Build Tool | Vite 8 |
+| Routing | React Router DOM v7 |
+| State Management | Zustand |
+| Local Database | Dexie (IndexedDB) |
+| Animations | Framer Motion |
+| Icons | React Icons |
+| Export | file-saver |
+| Unique IDs | uuid |
+| Styling | Custom CSS (dark theme) |
 
 ---
 
-## Project Structure
-
-```
-src/
-├── App.tsx                  # Root router and route definitions
-├── main.tsx                 # React DOM entry point
-│
-├── types/                   # Shared TypeScript types
-│   ├── index.ts             # Node, GraphState, HistoryEntry, ToastMessage
-│   ├── maps.ts              # Map/graph metadata types
-│   └── user.ts              # User/auth types
-│
-├── store/                   # Zustand global state
-│   ├── useGraphStore.ts     # Store creation
-│   ├── actions.ts           # All graph mutation actions
-│   └── selectors.ts         # Derived state selectors
-│
-├── db/
-│   ├── indexedDB.ts         # Dexie DB class + CRUD helpers
-│   └── migrations.ts        # DB version migrations
-│
-├── hooks/
-│   ├── useAutoLayout.ts     # Triggers tree auto-arrangement
-│   ├── useBezierPath.ts     # Bezier curve path calculations
-│   ├── useCanvasTransform.ts# Pan/zoom transform state
-│   ├── useDraggableNode.ts  # Drag-and-drop for nodes
-│   ├── useFetch.ts          # Generic data-fetching hook
-│   ├── useKeyboardShortcuts.ts # Global keyboard handler
-│   ├── useLocalStorage.ts   # Low-level localStorage hook
-│   ├── useLocalStorageSync.ts  # Auto-save / manual-save logic
-│   ├── useMediaQuery.ts     # Responsive breakpoint detection
-│   └── useNodeSelection.ts  # Node selection state
-│
-├── contexts/
-│   └── AuthContext.tsx      # Auth state provider
-│
-├── services/
-│   ├── apiClient.ts         # Base HTTP client
-│   ├── authService.ts       # Auth API calls
-│   └── mapsService.ts       # Maps/graph API calls
-│
-├── constants/
-│   ├── config.ts            # App-wide config constants
-│   └── routes.ts            # Route path constants and titles
-│
-├── utils/
-│   ├── bezierCalculator.ts  # Bezier control point math
-│   ├── exportUtils.ts       # JSON / SVG / PNG export helpers
-│   ├── graphAlgorithms.ts   # Tree traversal and graph algorithms
-│   ├── layoutEngine.ts      # Auto-layout positioning engine
-│   └── validation.ts        # Input validation helpers
-│
-├── layouts/
-│   ├── AppLayout.tsx        # Layout for authenticated app pages
-│   ├── AuthLayout.tsx       # Layout for auth pages
-│   └── LandingLayout.tsx    # Layout for public marketing pages
-│
-├── pages/
-│   ├── Landing/             # Hero, Features, Testimonials, FAQ, Newsletter
-│   ├── Auth/                # Login, SignUp, ForgotPassword
-│   ├── Dashboard/           # Saved maps overview
-│   ├── Editor/              # Main mind map editor
-│   ├── Templates/           # Starter template picker
-│   ├── Settings/            # User settings
-│   ├── Profile/             # User profile
-│   ├── Help/                # Help & docs
-│   ├── About/               # About page
-│   └── NotFound/            # 404 page
-│
-├── components/
-│   ├── InfiniteCanvas/      # Canvas, grid background, SVG edge layer
-│   ├── MindMapNode/         # Node card, actions, collapse toggle, styles
-│   ├── WorkspaceOverlay/    # HUD, zoom widget, port array
-│   ├── Navbar/              # App navbar
-│   ├── LandingNavbar/       # Landing page navbar
-│   ├── Sidebar/             # App sidebar
-│   ├── MapCard/             # Dashboard map thumbnail card
-│   ├── Footer/              # Footer
-│   ├── ProtectedRoute.tsx   # Auth guard wrapper
-│   └── UI/                  # Badge, Button, ButtonGroup, Card,
-│                            #   EmptyState, Input, Modal, Spinner, Toast
-│
-└── assets/                  # Static images and icons
-```
-
----
-
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ and npm
+- Node.js (v18 or higher recommended)
+- npm
 
 ### Installation
 
 ```bash
 # Clone the repository
-git clone <your-repo-url>
+git clone https://github.com/your-username/mindmap-graph-builder.git
+
+# Navigate into the project
 cd mindmap-graph-builder
 
 # Install dependencies
@@ -155,15 +77,15 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173) in your browser.
+The app will be available at `http://localhost:5173`.
 
-### Production Build
+### Build for Production
 
 ```bash
 npm run build
 ```
 
-Output is placed in the `dist/` directory.
+Built files will be output to the `dist/` directory.
 
 ### Preview Production Build
 
@@ -179,82 +101,86 @@ npm run lint
 
 ---
 
-## Keyboard Shortcuts
+## 📁 Project Structure
 
-| Shortcut | Action |
-|---|---|
-| `Ctrl / ⌘ + Z` | Undo |
-| `Ctrl / ⌘ + Shift + Z` | Redo |
-| `Enter` | Add child node to selected node |
-| `Tab` | Add sibling node to selected node |
-| `Delete / Backspace` | Delete selected node (and its subtree) |
-| `Escape` | Deselect current node |
-| `Ctrl / ⌘ + S` | Save to localStorage |
-| `Ctrl / ⌘ + =` / `+` | Zoom in |
-| `Ctrl / ⌘ + -` | Zoom out |
-| `Ctrl / ⌘ + 0` | Reset zoom and pan |
-
----
-
-## Data Persistence
-
-Graph state is stored in two layers:
-
-- **localStorage** — Auto-saves the active graph on every change and on manual save. Key format: `graph-<graphId>`.
-- **IndexedDB (Dexie)** — Used for listing and managing multiple saved graphs on the Dashboard. The database is named `MindMapDB` and stores records with `id`, `name`, `data`, `createdAt`, and `updatedAt`.
-
----
-
-## Export Formats
-
-| Format | Contents |
-|---|---|
-| **JSON** | Full graph state (`nodes`, `rootNodeId`) — re-importable |
-| **SVG** | Vector image of the mind map with bezier edges |
-| **PNG** | 2× rasterized version of the SVG export |
-
----
-
-## State Shape
-
-The core `GraphState` managed by Zustand:
-
-```ts
-interface GraphState {
-  nodes: Record<string, Node>;   // All nodes keyed by ID
-  rootNodeId: string | null;     // ID of the root node
-  panX: number;                  // Canvas horizontal offset
-  panY: number;                  // Canvas vertical offset
-  zoomScale: number;             // Canvas zoom (0.1 – 5)
-  selectedNodeId: string | null; // Currently selected node
-  activeBranches: number;        // Total node count
-  maxDepth: number;              // Deepest depth in the tree
-}
 ```
-
-Each `Node` contains:
-
-```ts
-interface Node {
-  id: string;
-  parentId: string | null;
-  childrenIds: string[];
-  x: number;
-  y: number;
-  title: string;
-  color: string;
-  isCollapsed: boolean;
-  depth: number;
-  metadata: {
-    createdAt: Date;
-    updatedAt: Date;
-    tags: string[];
-  };
-}
+src/
+├── assets/              # Static assets
+├── components/
+│   ├── InfiniteCanvas/  # Zoomable/pannable canvas
+│   ├── MindMapNode/     # Node rendering
+│   ├── MapCard/         # Dashboard map cards
+│   ├── WorkspaceOverlay/# Toolbar and overlays
+│   ├── Sidebar/         # App sidebar navigation
+│   ├── Navbar/          # App top navigation
+│   ├── LandingNavbar/   # Landing page nav
+│   ├── Footer/          # Footer component
+│   └── UI/              # Shared UI components
+├── constants/
+│   ├── config.ts        # Colors, node defaults, zoom settings
+│   └── routes.ts        # Route constants
+├── contexts/
+│   └── AuthContext.tsx  # Authentication context
+├── db/                  # Dexie IndexedDB setup
+├── hooks/
+│   ├── useAutoLayout.ts       # Auto-arrange logic trigger
+│   ├── useBezierPath.ts       # Edge curve calculations
+│   ├── useDraggableNode.ts    # Node drag interactions
+│   ├── useLocalStorage.ts     # Generic localStorage hook
+│   ├── useLocalStorageSync.ts # Sync state to localStorage
+│   ├── useMediaQuery.ts       # Responsive breakpoints
+│   └── useNodeSelection.ts    # Node selection state
+├── layouts/
+│   ├── AppLayout.tsx          # Authenticated app layout
+│   ├── AuthLayout.tsx         # Auth pages layout
+│   └── LandingLayout.tsx      # Public landing layout
+├── pages/
+│   ├── Landing/         # Home / marketing page
+│   ├── Dashboard/       # Map list and management
+│   ├── Editor/          # The main mind map editor
+│   ├── Templates/       # Template browser
+│   ├── Settings/        # User settings
+│   ├── Profile/         # User profile
+│   ├── Help/            # Help page
+│   ├── About/           # About page
+│   └── NotFound/        # 404 page
+├── services/            # API / data service layer
+├── store/               # Zustand store definitions
+├── types/
+│   ├── index.ts         # Core types (Node, GraphState, etc.)
+│   ├── maps.ts          # Map-related types
+│   └── user.ts          # User types
+└── utils/
+    ├── bezierCalculator.ts   # Bezier curve math
+    ├── exportUtils.ts        # JSON / SVG / PNG export
+    ├── graphAlgorithms.ts    # Graph traversal helpers
+    ├── layoutEngine.ts       # Auto-arrange layout engine
+    └── validation.ts         # Input validation helpers
 ```
 
 ---
 
-## License
+## 🎨 Node Colors
+
+Nodes support 12 built-in accent colors:
+
+`#6366f1` · `#8b5cf6` · `#ec4899` · `#f43f5e` · `#ef4444` · `#f97316` · `#f59e0b` · `#84cc16` · `#22c55e` · `#14b8a6` · `#06b6d4` · `#3b82f6`
+
+---
+
+## 📦 Available Templates
+
+| Template | Category | Description |
+|---|---|---|
+| Project Plan | Business | Organize project tasks and milestones |
+| Brainstorming | Creative | Capture and organize creative ideas |
+| Study Notes | Education | Structure your study materials |
+| Meeting Notes | Business | Document meeting discussions |
+| SWOT Analysis | Strategy | Analyze strengths and opportunities |
+| Roadmap | Product | Plan your product roadmap |
+
+---
+
+## 📄 License
 
 This project is private. All rights reserved.

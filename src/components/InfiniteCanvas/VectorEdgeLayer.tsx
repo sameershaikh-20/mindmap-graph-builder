@@ -8,19 +8,40 @@ interface EdgeLineProps {
 }
 
 const EdgeLine = React.memo(function EdgeLine({ parentId, childId }: EdgeLineProps) {
-  const { path } = useBezierPath(parentId, childId);
+  const { path, color } = useBezierPath(parentId, childId);
 
   if (!path) return null;
 
   return (
-    <path
-      d={path}
-      stroke="#4a4a6a"
-      strokeWidth={1.5}
-      fill="none"
-      strokeLinecap="round"
-      opacity={0.6}
-    />
+    <g>
+      {/* Glow behind edge */}
+      <path
+        d={path}
+        stroke={color}
+        strokeWidth={4}
+        fill="none"
+        strokeLinecap="round"
+        opacity={0.08}
+      />
+      {/* Main edge */}
+      <path
+        d={path}
+        stroke={color}
+        strokeWidth={2}
+        fill="none"
+        strokeLinecap="round"
+        opacity={0.5}
+      />
+      {/* Bright core */}
+      <path
+        d={path}
+        stroke={color}
+        strokeWidth={1}
+        fill="none"
+        strokeLinecap="round"
+        opacity={0.8}
+      />
+    </g>
   );
 });
 
@@ -45,7 +66,16 @@ export const VectorEdgeLayer = React.memo(function VectorEdgeLayer() {
         pointerEvents: 'none', zIndex: 0,
       }}
     >
-      <g transform={`translate(${panX}, ${panY}) scale(${zoomScale})`}>
+      <defs>
+        <filter id="edge-glow">
+          <feGaussianBlur stdDeviation="2" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+      <g transform={`translate(${panX}, ${panY}) scale(${zoomScale})`} filter="url(#edge-glow)">
         {edges.map(({ parentId, childId }) => (
           <EdgeLine key={`${parentId}-${childId}`} parentId={parentId} childId={childId} />
         ))}

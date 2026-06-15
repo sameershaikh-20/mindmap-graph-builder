@@ -6,10 +6,11 @@ interface NodeContentProps {
   isEditing: boolean;
   onStartEdit: () => void;
   onFinishEdit: (title: string) => void;
+  depth?: number;
 }
 
 export const NodeContent = React.memo(function NodeContent({
-  node, isEditing, onStartEdit, onFinishEdit,
+  node, isEditing, onStartEdit, onFinishEdit, depth = 0,
 }: NodeContentProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [val, setVal] = useState(node.title);
@@ -50,7 +51,8 @@ export const NodeContent = React.memo(function NodeContent({
         onKeyDown={handleKeyDown}
         style={{
           width: '100%', border: 'none', background: 'transparent',
-          color: '#fff', fontSize: 13, fontWeight: 500, outline: 'none',
+          color: '#fff', fontSize: depth === 0 ? 15 : 13,
+          fontWeight: depth === 0 ? 600 : 500, outline: 'none',
           fontFamily: 'Inter, sans-serif', padding: 0,
         }}
         aria-label="Edit node title"
@@ -62,8 +64,10 @@ export const NodeContent = React.memo(function NodeContent({
     <span
       onClick={onStartEdit}
       style={{
-        color: '#fff', fontSize: 13, fontWeight: 500, cursor: 'text',
-        wordBreak: 'break-word', lineHeight: 1.3, display: 'block',
+        color: '#fff', fontSize: depth === 0 ? 15 : 13,
+        fontWeight: depth === 0 ? 600 : 500,
+        cursor: 'text', wordBreak: 'break-word', lineHeight: 1.3,
+        display: 'block', letterSpacing: depth === 0 ? '0.02em' : 'normal',
       }}
       title="Click to edit"
     >

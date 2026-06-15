@@ -9,6 +9,8 @@ interface MapCardProps {
   onClick: () => void;
 }
 
+const thumbnailColors = ['#6366f1', '#ec4899', '#14b8a6', '#f59e0b', '#8b5cf6'];
+
 export const MapCard = React.memo(function MapCard({ map, onClick }: MapCardProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [renaming, setRenaming] = useState(false);
@@ -17,6 +19,9 @@ export const MapCard = React.memo(function MapCard({ map, onClick }: MapCardProp
   const lastModified = new Date(map.lastModified);
   const timeAgo = Math.floor((Date.now() - lastModified.getTime()) / (1000 * 60 * 60));
   const timeStr = timeAgo < 1 ? 'Just now' : timeAgo < 24 ? `${timeAgo}h ago` : `${Math.floor(timeAgo / 24)}d ago`;
+
+  const seed = map.id.charCodeAt(0) % thumbnailColors.length;
+  const accentColor = thumbnailColors[seed];
 
   useEffect(() => {
     if (renaming && inputRef.current) {
@@ -70,38 +75,61 @@ export const MapCard = React.memo(function MapCard({ map, onClick }: MapCardProp
   };
 
   return (
-    <Card
-      hover
-      padding={0}
+    <div
       onClick={onClick}
-      style={{ overflow: menuOpen ? 'visible' : 'hidden', position: 'relative' }}
+      style={{
+        background: '#2a2a4a',
+        borderRadius: 12,
+        border: '1px solid rgba(255,255,255,0.06)',
+        overflow: menuOpen ? 'visible' : 'hidden',
+        position: 'relative',
+        cursor: 'pointer',
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)';
+        e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.2)';
+        e.currentTarget.style.transform = 'translateY(-3px)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)';
+        e.currentTarget.style.boxShadow = 'none';
+        e.currentTarget.style.transform = 'translateY(0)';
+      }}
     >
+      {/* Gradient thumbnail */}
       <div
         style={{
-          height: 60,
-          background: '#2a2a4a',
+          height: 80,
+          background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}08)`,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: 16,
-          padding: '0 20px',
+          position: 'relative',
+          overflow: 'hidden',
         }}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <div style={{ width: 32, height: 6, borderRadius: 3, background: '#6366f1', opacity: 0.6 }} />
-          <div style={{ width: 20, height: 6, borderRadius: 3, background: '#ec4899', opacity: 0.6 }} />
-          <div style={{ width: 24, height: 6, borderRadius: 3, background: '#14b8a6', opacity: 0.6 }} />
+        <div style={{ position: 'absolute', inset: 0, opacity: 0.12 }}>
+          <svg width="100%" height="100%" viewBox="0 0 200 80">
+            <circle cx="60" cy="40" r="12" fill={accentColor} />
+            <circle cx="100" cy="25" r="8" fill="#ec4899" />
+            <circle cx="140" cy="50" r="10" fill="#14b8a6" />
+            <line x1="72" y1="40" x2="92" y2="27" stroke="#a1a1aa" strokeWidth="1.5" opacity="0.4" />
+            <line x1="108" y1="27" x2="130" y2="48" stroke="#a1a1aa" strokeWidth="1.5" opacity="0.4" />
+          </svg>
         </div>
-        <svg width="50" height="40" viewBox="0 0 50 40" fill="none">
-          <circle cx="10" cy="20" r="4" fill="#6366f1" opacity="0.5" />
-          <circle cx="25" cy="10" r="3" fill="#ec4899" opacity="0.5" />
-          <circle cx="40" cy="22" r="3.5" fill="#14b8a6" opacity="0.5" />
-          <line x1="14" y1="20" x2="22" y2="11" stroke="#a1a1aa" strokeWidth="1" opacity="0.3" />
-          <line x1="28" y1="10" x2="37" y2="21" stroke="#a1a1aa" strokeWidth="1" opacity="0.3" />
-        </svg>
+        {/* Node count badge */}
+        <div style={{
+          position: 'absolute', top: 10, right: 10,
+          background: 'rgba(0,0,0,0.4)', borderRadius: 6,
+          padding: '3px 8px', fontSize: 11, color: '#fff', fontWeight: 500,
+        }}>
+          {map.nodeCount} nodes
+        </div>
       </div>
-      <div style={{ padding: 12 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
+
+      <div style={{ padding: 16 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
           {renaming ? (
             <input
               ref={inputRef}
@@ -117,11 +145,11 @@ export const MapCard = React.memo(function MapCard({ map, onClick }: MapCardProp
                 flex: 1,
                 background: '#1a1a2e',
                 border: '1px solid #6366f1',
-                borderRadius: 4,
+                borderRadius: 6,
                 color: '#fff',
                 fontSize: 14,
                 fontWeight: 600,
-                padding: '2px 6px',
+                padding: '4px 8px',
                 outline: 'none',
                 fontFamily: 'Inter, sans-serif',
               }}
@@ -135,80 +163,70 @@ export const MapCard = React.memo(function MapCard({ map, onClick }: MapCardProp
             <button
               onClick={(e) => { e.stopPropagation(); setMenuOpen(!menuOpen); }}
               style={{
-                background: 'none',
-                border: 'none',
-                color: '#a1a1aa',
-                cursor: 'pointer',
-                padding: 2,
-                display: 'flex',
-                alignItems: 'center',
-                borderRadius: 4,
+                background: 'none', border: 'none', color: '#666',
+                cursor: 'pointer', padding: 4, display: 'flex',
+                alignItems: 'center', borderRadius: 6,
+                transition: 'all 0.15s',
               }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = '#a1a1aa'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = '#666'; }}
             >
               <FiMoreVertical size={14} />
             </button>
             {menuOpen && (
               <div
                 style={{
-                  position: 'absolute',
-                  top: '100%',
-                  right: 0,
-                  background: '#2a2a4a',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                  borderRadius: 6,
-                  padding: 4,
-                  minWidth: 130,
-                  zIndex: 10,
+                  position: 'absolute', bottom: '100%', right: 0, marginBottom: 4,
+                  background: '#2a2a4a', border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: 8, padding: 4, minWidth: 140, zIndex: 10,
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
                 }}
               >
                 <button
                   onClick={handleRename}
                   style={{
-                    display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '6px 10px',
-                    background: 'none', border: 'none', color: '#a1a1aa', cursor: 'pointer', fontSize: 12,
-                    fontFamily: 'Inter, sans-serif', borderRadius: 4,
+                    display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '8px 12px',
+                    background: 'none', border: 'none', color: '#a1a1aa', cursor: 'pointer', fontSize: 13,
+                    fontFamily: 'Inter, sans-serif', borderRadius: 6,
                   }}
                   onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; }}
                   onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; }}
                 >
-                  <FiEdit2 size={12} /> Rename
+                  <FiEdit2 size={13} /> Rename
                 </button>
                 <button
                   onClick={handleDuplicate}
                   style={{
-                    display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '6px 10px',
-                    background: 'none', border: 'none', color: '#a1a1aa', cursor: 'pointer', fontSize: 12,
-                    fontFamily: 'Inter, sans-serif', borderRadius: 4,
+                    display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '8px 12px',
+                    background: 'none', border: 'none', color: '#a1a1aa', cursor: 'pointer', fontSize: 13,
+                    fontFamily: 'Inter, sans-serif', borderRadius: 6,
                   }}
                   onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; }}
                   onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; }}
                 >
-                  <FiCopy size={12} /> Duplicate
+                  <FiCopy size={13} /> Duplicate
                 </button>
-                <div style={{ height: 1, background: 'rgba(255,255,255,0.08)', margin: '2px 0' }} />
+                <div style={{ height: 1, background: 'rgba(255,255,255,0.08)', margin: '4px 0' }} />
                 <button
                   onClick={handleDelete}
                   style={{
-                    display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '6px 10px',
-                    background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: 12,
-                    fontFamily: 'Inter, sans-serif', borderRadius: 4,
+                    display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '8px 12px',
+                    background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: 13,
+                    fontFamily: 'Inter, sans-serif', borderRadius: 6,
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(239,68,68,0.15)'; }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(239,68,68,0.12)'; }}
                   onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; }}
                 >
-                  <FiTrash2 size={12} /> Delete
+                  <FiTrash2 size={13} /> Delete
                 </button>
               </div>
             )}
           </div>
         </div>
-        <p style={{ color: '#666', fontSize: 11, margin: '0 0 6px' }}>
+        <p style={{ color: '#666', fontSize: 12, margin: 0 }}>
           Edited {timeStr}
         </p>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Badge>{map.nodeCount} nodes</Badge>
-        </div>
       </div>
-    </Card>
+    </div>
   );
 });
