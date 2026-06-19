@@ -62,7 +62,7 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/mindmap-graph-builder.git
+git clone [https://github.com/sameershaikh-20/mindmap-graph-builder.git]
 
 # Navigate into the project
 cd mindmap-graph-builder
